@@ -1,0 +1,21 @@
+const assert = require('node:assert/strict');
+const C = require('../app/core.js');
+assert.equal(C.doubleClap([{start:0,end:50},{start:450,end:500}]),true);
+assert.equal(C.doubleClap([{start:0,end:50}]),false);
+assert.equal(C.doubleClap([{start:0,end:400},{start:500,end:600}]),false);
+assert.equal(C.doubleClap([{start:0,end:50},{start:950,end:1000}]),false);
+assert.match(C.response('MEOW',7,false),/Breakfast/);
+assert.match(C.response('MEOW',18,false),/Dinner/);
+assert.match(C.response('MEOW',21,false),/moon/);
+assert.match(C.response('MEOW',7,true),/first time/);
+assert.match(C.response('MEOW',0,false,{breakfast:23,dinner:18,bedtime:21}),/Breakfast/);
+assert.equal(C.classify({rms:0}), 'OTHER');
+assert.equal(C.classify({rms:.1,high:.8,zcr:.4,low:.05,tonal:.01}),'HISS');
+assert.equal(C.classify({rms:.1,high:.01,zcr:.01,low:.9,tonal:.2}),'PURR');
+assert.equal(C.classify({rms:.1,high:.1,zcr:.02,low:.1,tonal:.4}),'MEOW');
+const v=new Array(16).fill(0);v[0]=1;const other=new Array(16).fill(0);other[5]=1;
+assert.equal(C.match(v,{}),null);assert.equal(C.match(v,{mac:v}),'mac');assert.equal(C.match(other,{mac:v}),null);assert.equal(C.match(v,{mac:v,on:v}),null);
+for(const intent of C.intents){const data=C.synth(intent,16000);assert.ok(data.length>1000);assert.ok(data.every(n=>Number.isFinite(n)&&Math.abs(n)<=1));assert.ok(data.some(n=>Math.abs(n)>.01));}
+assert.notDeepEqual(C.synth('HELLO',16000),C.synth('HELLO',16000));
+const quiet=C.features(new Float32Array(2048),new Float32Array(1024).fill(-Infinity),44100);assert.equal(quiet.rms,0);assert.ok(quiet.vector.every(Number.isFinite));
+console.log('PASS: routines, repetition, silence, classifier rules, trigger rejection/ambiguity, all ten bounded varied voices. Real acoustic accuracy remains unverified.');

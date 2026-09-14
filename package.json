@@ -1,0 +1,9 @@
+{
+  "name": "cattalk-ios",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "test": "node tests/core.test.js && node tests/listening.test.cjs",
+    "start": "node server.cjs"
+  }
+}
